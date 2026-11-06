@@ -609,22 +609,25 @@ function handleSubmit() {
   document.getElementById('form-state').style.display = 'none';
   document.getElementById('thankyou-state').style.display = 'block';
 
-  // Save to database
+  // Save to Google Sheet
   (async () => {
     try {
-      const db = await claude.use('db');
-      if (db) {
-        await db.collection('submissions').add({
+      await fetch('https://script.google.com/macros/s/AKfycbzYD_fpo5EZlWJNUt3Nnsfj8t6-7UPZxFjNbPAZDFfM5QmISgLQuk41N3uHH2ujnUB2/exec', {
+        method: 'POST',
+        body: JSON.stringify({
+          source: 'rainbow',
           ts: new Date().toISOString(),
-          client: PULSE.clientName + ', ' + PULSE.clientTitle + ', ' + PULSE.clientCompany,
+          client: PULSE.clientName,
+          title: PULSE.clientTitle,
+          company: PULSE.clientCompany,
           consultant: PULSE.consultantName,
           engagement: PULSE.engagementTitle,
           ref: PULSE.engagementRef,
           tone: toneLabel,
           permissions: permSummary,
           text: finalText
-        });
-      }
+        })
+      });
     } catch(e) { /* non-fatal */ }
   })();
   window.scrollTo({ top: 0, behavior: 'smooth' });
